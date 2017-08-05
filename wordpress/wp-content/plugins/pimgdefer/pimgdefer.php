@@ -52,3 +52,19 @@ function enqueue_pimgdefer_script() {
     wp_enqueue_script( 'pimgdefer' );
 }
 add_action('wp_enqueue_scripts', 'enqueue_pimgdefer_script', 10);
+
+function create_src( $matches ) {
+    return $matches[1] .  'data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-src="'. $matches['2'];
+}
+
+function create_srcset( $matches ) {
+    return $matches[1] .  '" data-setsrc="'. $matches['2'];
+}
+
+function my_the_content_filter( $content ) {
+    $content = preg_replace_callback("/(<img[^>]*src *= *[\"']?)([^\"']*)/i", 'create_src', $content);
+    $content = preg_replace_callback("/(<img[^>]*srcset *= *[\"']?)([^\"']*)/i", 'create_srcset', $content);
+    return $content;
+}
+
+add_filter( 'the_content', 'my_the_content_filter', 999, 1 );
