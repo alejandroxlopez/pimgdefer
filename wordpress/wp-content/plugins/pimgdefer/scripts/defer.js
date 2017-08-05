@@ -9,6 +9,7 @@
 
 /******Defer Images******/
 function init() {
+    alert( "Loaded!" );
     var imgd = document.getElementsByTagName('img');
     for (var i = 0; i < imgd.length; i++) {
         if (imgd[i].getAttribute('data-src')) {
