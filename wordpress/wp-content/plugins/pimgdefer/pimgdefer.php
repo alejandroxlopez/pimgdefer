@@ -44,7 +44,7 @@ foreach ( $plugin_constants as $constant => $value ) {
 }
 
 function register_pimgdefer_script() {
-    wp_register_script( 'pimgdefer', PIMGDEFER_URL . '/js/defer.js', array( 'jquery' ), false, true );
+    wp_register_script( 'pimgdefer', PIMGDEFER_URL . 'scripts/defer.js', array( 'jquery' ), false, true );
 }
 add_action( 'init', 'register_pimgdefer_script' );
 
