@@ -44,11 +44,11 @@ foreach ( $plugin_constants as $constant => $value ) {
 }
 
 function register_pimgdefer_script() {
-    wp_register_script( 'pimgdefer', PIMGDEFER_PATH . '/js/pimgdefer.js', array( 'jquery' ), false, true );
+    wp_register_script( 'pimgdefer', PIMGDEFER_URL . '/js/defer.js', array( 'jquery' ), false, true );
 }
 add_action( 'init', 'register_pimgdefer_script' );
 
 function enqueue_pimgdefer_script() {
-    wp_enqueue_script( 'pimagdefer' );
+    wp_enqueue_script( 'pimgdefer' );
 }
 add_action('wp_enqueue_scripts', 'enqueue_pimgdefer_script', 10);
