@@ -1,12 +1,3 @@
-// (function ($) {
-//     $("img").each(function () {
-//         var src = $(this).attr("src");
-//         $(this).attr("data-src", src);
-//         $(this).attr("src", "data:image/gif;base64,R0lGODlhAQABAAAAACw=");
-//     });
-
-// })(jQuery);
-
 /******Defer Images******/
 function init() {
     var imgd = document.getElementsByTagName('img');
