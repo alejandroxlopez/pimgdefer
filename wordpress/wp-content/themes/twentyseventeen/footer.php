@@ -43,5 +43,7 @@
 </div><!-- #page -->
 <?php wp_footer(); ?>
 
+<?php echo wp_get_attachment_image(27); ?>
+
 </body>
 </html>

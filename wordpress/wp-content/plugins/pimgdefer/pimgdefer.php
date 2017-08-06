@@ -28,13 +28,15 @@ if( ! function_exists('log_me') )
 }
 
 // Plugin constants.
-$plugin_path      = trailingslashit( dirname( __FILE__ ) );
-$plugin_dir       = plugin_dir_url( __FILE__ );
+$p_path      = trailingslashit( dirname( __FILE__ ) );
+$p_dir       = plugin_dir_url( __FILE__ );
 $plugin_constants = array(
 	'PIMGDEFER_VERSION'    => '1.0.0',
 	'PIMGDEFER_MAIN_FILE'  => __FILE__,
-	'PIMGDEFER_URL'        => $plugin_dir,
-	'PIMGDEFER_PATH'       => $plugin_path
+	'PIMGDEFER_URL'        => $p_dir,
+	'PIMGDEFER_PATH'       => $p_path,
+    'PIMGDEFER_SRC_REGEX'  => "/(<img[^>]*src *= *[\"']?)([^\"']*)/i",
+    'PIMGDEFER_SRCSET_REGEX'  => "/(<img[^>]*srcset *= *[\"']?)([^\"']*)/i",
 );
 
 foreach ( $plugin_constants as $constant => $value ) {
@@ -43,28 +45,53 @@ foreach ( $plugin_constants as $constant => $value ) {
 	}
 }
 
-function register_pimgdefer_script() {
+/**
+ * 
+ *
+ * @return void
+ */
+function get_default_imgdefer() {
+    return "data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+}
+
+function register_imgdefer_scripts() {
     wp_register_script( 'pimgdefer', PIMGDEFER_URL . 'scripts/defer.js', array( 'jquery' ), false, true );
 }
-add_action( 'init', 'register_pimgdefer_script' );
+add_action( 'init', 'register_imgdefer_scripts' );
 
-function enqueue_pimgdefer_script() {
+function enqueue_imgdefer_scripts() {
     wp_enqueue_script( 'pimgdefer' );
 }
-add_action('wp_enqueue_scripts', 'enqueue_pimgdefer_script', 10);
+add_action('wp_enqueue_scripts', 'enqueue_imgdefer_scripts', 10);
 
-function create_src( $matches ) {
-    return $matches[1] .  'data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-src="'. $matches['2'];
+function change_imgdefer_src( $matches ) {
+    return $matches[1] . get_default_imgdefer() . '" data-src="'. $matches['2'];
 }
 
-function create_srcset( $matches ) {
-    return $matches[1] .  '" data-setsrc="'. $matches['2'];
+function change_imgdefer_srcset( $matches ) {
+    return $matches[1] . get_default_imgdefer() . '" data-srcset="'. $matches['2'];
 }
 
-function my_the_content_filter( $content ) {
-    $content = preg_replace_callback("/(<img[^>]*src *= *[\"']?)([^\"']*)/i", 'create_src', $content);
-    $content = preg_replace_callback("/(<img[^>]*srcset *= *[\"']?)([^\"']*)/i", 'create_srcset', $content);
+function process_imgdefer_on_the_content( $content ) {
+    $content = preg_replace_callback(PIMGDEFER_SRC_REGEX, 'change_imgdefer_src', $content);
+    $content = preg_replace_callback(PIMGDEFER_SRCSET_REGEX, 'change_imgdefer_srcset', $content);
     return $content;
 }
 
-add_filter( 'the_content', 'my_the_content_filter', 999, 1 );
+add_filter( 'the_content', 'process_imgdefer_on_the_content', 999, 1 );
+add_filter( 'get_header_image_tag', 'process_imgdefer_on_the_content', 999, 1 );
+
+function process_imgdefer_on_attachment_image_attributes( $attr ) {
+    if( ! is_admin() ) {
+        $src_temp = $attr['src'];
+        $srcset_temp = $attr['srcset'];
+        $attr['src'] = get_default_imgdefer();
+        $attr['srcset'] = get_default_imgdefer();
+        $attr['data-src'] = $src_temp;
+        $attr['data-srcset'] = $srcset_temp;
+    }
+
+    return $attr;
+}
+
+add_filter( 'wp_get_attachment_image_attributes', 'process_imgdefer_on_attachment_image_attributes', 999);
