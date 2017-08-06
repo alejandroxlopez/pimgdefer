@@ -1,4 +1,0 @@
-[06-Aug-2017 00:10:22 UTC] PHP Warning:  array_map(): Argument #2 should be an array in C:\xampp\htdocs\pimgdefer\wordpress\wp-includes\media.php on line 920
-[06-Aug-2017 00:10:22 UTC] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\pimgdefer\wordpress\wp-includes\media.php on line 922
-[06-Aug-2017 00:10:43 UTC] PHP Warning:  array_map(): Argument #2 should be an array in C:\xampp\htdocs\pimgdefer\wordpress\wp-includes\media.php on line 920
-[06-Aug-2017 00:10:43 UTC] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\pimgdefer\wordpress\wp-includes\media.php on line 922
