@@ -1,3 +1,7 @@
-Hey Chris Update this please, hehe.
+#Image Deferral Plugin
+This plugin will defer the loading of your images until after the initial page load.
 
-Basically it is a plugin to improve your page performance using Image Defer instad of Lazy load.
+##How?
+The plugin tells your server to switch all image sources with a base64 1px image. Additionally, data-attributes reserve the original pathway to the image's location. When the HTML file is served, the browser will read the DOM and load the base64 image as a temporary place holder.
+
+After the DOM finishes loading, a script will run .onload and replace all of the sources with the image pathway found in the data-source. The effect is that your text content should load quicker, then the large image files will load after the rest of the page, thus increasing your pagespeed.
