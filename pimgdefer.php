@@ -95,3 +95,22 @@ function process_imgdefer_on_attachment_image_attributes( $attr ) {
 }
 
 add_filter( 'wp_get_attachment_image_attributes', 'process_imgdefer_on_attachment_image_attributes', 999);
+
+////////////////////////////////
+//Check this out
+///////////////////////////////
+
+function customFormatGallery($string,$attr){
+
+    $posts = get_posts(array('include' => $attr['ids'],'post_type' => 'attachment'));
+
+    foreach($posts as $imagePost){
+        $output .= "<img src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='  data-src='".wp_get_attachment_image_src($imagePost->ID, 'small')[0]."' /> ";
+        $output .= "<img src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=' data-media=\"(min-width: 400px)\" data-src='".wp_get_attachment_image_src($imagePost->ID, 'medium')[0]."' />";
+        $output .= "<img src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=' data-media=\"(min-width: 950px)\" data-src='".wp_get_attachment_image_src($imagePost->ID, 'large')[0]."' />";
+        $output .= "<img src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=' data-media=\"(min-width: 1200px)\"> data-src='".wp_get_attachment_image_src($imagePost->ID, 'extralarge')[0]."' />";
+    }
+
+    return $output;
+}
+add_filter('post_gallery','customFormatGallery',10,2);
