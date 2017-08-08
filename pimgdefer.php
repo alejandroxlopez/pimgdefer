@@ -65,11 +65,17 @@ function enqueue_imgdefer_scripts() {
 add_action('wp_enqueue_scripts', 'enqueue_imgdefer_scripts', 10);
 
 function change_imgdefer_src( $matches ) {
-    return $matches[1] . get_default_imgdefer() . '" data-src="'. $matches['2'];
+    if ( strpos( $matches[1], get_default_imgdefer() ) !== false) {
+        return $matches[1] . $matches[2];
+    }
+    return $matches[1] . get_default_imgdefer() . '" data-src="'. $matches[2];
 }
 
 function change_imgdefer_srcset( $matches ) {
-    return $matches[1] . get_default_imgdefer() . '" data-srcset="'. $matches['2'];
+    if ( strpos( $matches[1], get_default_imgdefer() ) !== false) {
+        return $matches[1] . $matches[2];
+    }
+    return $matches[1] . get_default_imgdefer() . '" data-srcset="'. $matches[2];
 }
 
 function process_imgdefer_on_the_content( $content ) {
@@ -81,20 +87,20 @@ function process_imgdefer_on_the_content( $content ) {
 add_filter( 'the_content', 'process_imgdefer_on_the_content', 999, 1 );
 add_filter( 'get_header_image_tag', 'process_imgdefer_on_the_content', 999, 1 );
 
-// function process_imgdefer_on_attachment_image_attributes( $attr ) {
-//     if( ! is_admin() ) {
-//         $src_temp = $attr['src'];
-//         $srcset_temp = $attr['srcset'];
-//         $attr['src'] = get_default_imgdefer();
-//         $attr['srcset'] = get_default_imgdefer();
-//         $attr['data-src'] = $src_temp;
-//         $attr['data-srcset'] = $srcset_temp;
-//     }
+function process_imgdefer_on_attachment_image_attributes( $attr ) {
+    if( ! is_admin() ) {
+        $src_temp = $attr['src'];
+        $srcset_temp = $attr['srcset'];
+        $attr['src'] = get_default_imgdefer();
+        $attr['srcset'] = get_default_imgdefer();
+        $attr['data-src'] = $src_temp;
+        $attr['data-srcset'] = $srcset_temp;
+    }
 
-//     return $attr;
-// }
+    return $attr;
+}
 
-// add_filter( 'wp_get_attachment_image_attributes', 'process_imgdefer_on_attachment_image_attributes', 999);
+add_filter( 'wp_get_attachment_image_attributes', 'process_imgdefer_on_attachment_image_attributes', 999);
 
 ////////////////////////////////
 //Check this out
