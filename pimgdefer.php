@@ -81,36 +81,36 @@ function process_imgdefer_on_the_content( $content ) {
 add_filter( 'the_content', 'process_imgdefer_on_the_content', 999, 1 );
 add_filter( 'get_header_image_tag', 'process_imgdefer_on_the_content', 999, 1 );
 
-function process_imgdefer_on_attachment_image_attributes( $attr ) {
-    if( ! is_admin() ) {
-        $src_temp = $attr['src'];
-        $srcset_temp = $attr['srcset'];
-        $attr['src'] = get_default_imgdefer();
-        $attr['srcset'] = get_default_imgdefer();
-        $attr['data-src'] = $src_temp;
-        $attr['data-srcset'] = $srcset_temp;
-    }
+// function process_imgdefer_on_attachment_image_attributes( $attr ) {
+//     if( ! is_admin() ) {
+//         $src_temp = $attr['src'];
+//         $srcset_temp = $attr['srcset'];
+//         $attr['src'] = get_default_imgdefer();
+//         $attr['srcset'] = get_default_imgdefer();
+//         $attr['data-src'] = $src_temp;
+//         $attr['data-srcset'] = $srcset_temp;
+//     }
 
-    return $attr;
-}
+//     return $attr;
+// }
 
-add_filter( 'wp_get_attachment_image_attributes', 'process_imgdefer_on_attachment_image_attributes', 999);
+// add_filter( 'wp_get_attachment_image_attributes', 'process_imgdefer_on_attachment_image_attributes', 999);
 
 ////////////////////////////////
 //Check this out
 ///////////////////////////////
 
-function customFormatGallery($string,$attr){
+// function customFormatGallery($string,$attr){
 
-    $posts = get_posts(array('include' => $attr['ids'],'post_type' => 'attachment'));
+//     $posts = get_posts(array('include' => $attr['ids'],'post_type' => 'attachment'));
 
-    foreach($posts as $imagePost){
-        $output .= "<img src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='  data-src='".wp_get_attachment_image_src($imagePost->ID, 'small')[0]."' /> ";
-        $output .= "<img src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=' data-media=\"(min-width: 400px)\" data-src='".wp_get_attachment_image_src($imagePost->ID, 'medium')[0]."' />";
-        $output .= "<img src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=' data-media=\"(min-width: 950px)\" data-src='".wp_get_attachment_image_src($imagePost->ID, 'large')[0]."' />";
-        $output .= "<img src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=' data-media=\"(min-width: 1200px)\"> data-src='".wp_get_attachment_image_src($imagePost->ID, 'extralarge')[0]."' />";
-    }
+//     foreach($posts as $imagePost){
+//         $output .= "<img src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='  data-src='".wp_get_attachment_image_src($imagePost->ID, 'small')[0]."' /> ";
+//         $output .= "<img src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=' data-media=\"(min-width: 400px)\" data-src='".wp_get_attachment_image_src($imagePost->ID, 'medium')[0]."' />";
+//         $output .= "<img src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=' data-media=\"(min-width: 950px)\" data-src='".wp_get_attachment_image_src($imagePost->ID, 'large')[0]."' />";
+//         $output .= "<img src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=' data-media=\"(min-width: 1200px)\"> data-src='".wp_get_attachment_image_src($imagePost->ID, 'extralarge')[0]."' />";
+//     }
 
-    return $output;
-}
-add_filter('post_gallery','customFormatGallery',10,2);
+//     return $output;
+// }
+// add_filter('post_gallery','customFormatGallery',10,2);
