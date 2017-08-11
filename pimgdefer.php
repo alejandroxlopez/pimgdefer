@@ -46,12 +46,12 @@ foreach ( $plugin_constants as $constant => $value ) {
 }
 
 /**
- * 
+ *
  *
  * @return void
  */
 function get_default_imgdefer() {
-    return "data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+    return  PIMGDEFER_URL . 'img/0.gif'; //"data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
 }
 
 function register_imgdefer_scripts() {
@@ -101,6 +101,12 @@ function process_imgdefer_on_attachment_image_attributes( $attr ) {
 }
 
 add_filter( 'wp_get_attachment_image_attributes', 'process_imgdefer_on_attachment_image_attributes', 999);
+
+
+function pimgdefer_disable_srcset( $sources ) {
+    return false;
+}
+add_filter( 'wp_calculate_image_srcset', 'pimgdefer_disable_srcset' );
 
 ////////////////////////////////
 //Check this out
