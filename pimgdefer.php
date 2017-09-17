@@ -27,7 +27,9 @@ if ( ! function_exists( 'log_me' ) ) {
 }
 
 // Globals
-global $pimgdefer_allowed_post_types;
+global $pimgdefer_allowed_post_types, $pimgdefer_prevent_defering;
+
+$pimgdefer_prevent_defering = false;
 $pimgdefer_allowed_post_types = get_option( 'pimgdefer_post_types', array() );
 
 // Plugin constants.
@@ -49,11 +51,8 @@ foreach ( $plugin_constants as $constant => $value ) {
 	}
 }
 
-function get_default_imgdefer() {
-	return  PIMGDEFER_URL . 'img/0.gif';
-}
-
 function register_imgdefer_scripts() {
+	if( prevent_pimgdefer() ) return;
 	wp_register_script( 'pimgdefer', PIMGDEFER_URL . 'scripts/defer.js', array( 'jquery' ), false, true );
 }
 add_action( 'init', 'register_imgdefer_scripts' );
@@ -63,6 +62,7 @@ function enqueue_imgdefer_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_imgdefer_scripts', 10 );
 
+include_once PIMGDEFER_PATH . 'helpers.php';
 include_once PIMGDEFER_PATH . 'classes/class-img-defer-core.php';
 include_once PIMGDEFER_PATH . 'classes/class-defer-toggle.php';
 include_once PIMGDEFER_PATH . 'classes/class-config.php';

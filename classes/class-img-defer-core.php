@@ -7,31 +7,31 @@ class PIMGDefer_Core {
 
 	function __construct() {
 		// The content search and change to defer
-		add_filter( 'the_content', array( $this, 'process_imgdefer_on_the_content' ), 999, 1 );
+		add_filter( 'the_content', array( 'PIMGDefer_Core', 'process_imgdefer_on_the_content' ), 999, 1 );
 
 		// Tweenty something support
-		add_filter( 'get_header_image_tag', array( $this, 'process_imgdefer_on_the_content' ), 999, 1 );
+		add_filter( 'get_header_image_tag', array( 'PIMGDefer_Core', 'process_imgdefer_on_the_content' ), 999, 1 );
 
 		// HTML post thumnail
-		add_filter( 'post_thumbnail_html', array( $this, 'process_imgdefer_on_the_content' ), 999 );
+		add_filter( 'post_thumbnail_html', array( 'PIMGDefer_Core', 'process_imgdefer_on_the_content' ), 999 );
 
 		// Avatar defering
-		add_filter( 'get_avatar', array( $this, 'process_imgdefer_on_the_content' ), 999 );
+		add_filter( 'get_avatar', array( 'PIMGDefer_Core', 'process_imgdefer_on_the_content' ), 999 );
 
 		// WP Attachment function support
 		add_filter( 'wp_get_attachment_image_attributes', array( $this, 'process_imgdefer_on_attachment_image_attributes' ), 999, 2 );
 	}
 
-	public function process_imgdefer_on_the_content( $content ) {
-		if ( is_feed() || is_preview() ) {
+	public static function process_imgdefer_on_the_content( $content ) {
+		if ( is_feed() || is_preview() || prevent_pimgdefer() ) {
 			return $content;
 		}
 
-		$content = preg_replace_callback( '#<(img)([^>]+?)(>(.*?)</\\1>|[\/]?>)#si', array( $this, 'process_image' ), $content );
+		$content = preg_replace_callback( '#<(img)([^>]+?)(>(.*?)</\\1>|[\/]?>)#si', array( 'PIMGDefer_Core', 'process_image' ), $content );
 		return $content;
 	}
 
-	public function process_image( $matches ) {
+	public static function process_image( $matches ) {
 		$placeholder_image = get_default_imgdefer();
 
 		$old_attributes_str = $matches[2];
@@ -65,7 +65,7 @@ class PIMGDefer_Core {
 			unset( $new_attributes['data-srcset'] );
 		}
 
-		$new_attributes_str = $this->build_attributes_string( $new_attributes );
+		$new_attributes_str = self::build_attributes_string( $new_attributes );
 		$scaped_placeholder_image = esc_url( $placeholder_image );
 
 		if ( ! isset( $image_srcset ) ) {
@@ -75,7 +75,7 @@ class PIMGDefer_Core {
 		}
 	}
 
-	public function build_attributes_string( $attributes ) {
+	public static function build_attributes_string( $attributes ) {
 		$string = array();
 		foreach ( $attributes as $name => $attribute ) {
 			$value = $attribute['value'];
@@ -85,12 +85,27 @@ class PIMGDefer_Core {
 				$string[] = sprintf( '%s="%s"', $name, esc_attr( $value ) );
 			}
 		}
+
+		return implode( ' ', $string );
+	}
+
+	public static function build_attributes_string_by_key( $attributes ) {
+		$string = array();
+		foreach ( $attributes as $name => $value ) {
+			if ( empty( $value ) ) {
+				$string[] = sprintf( '%s', $name );
+			} else {
+				$string[] = sprintf( '%s="%s"', $name, esc_attr( $value ) );
+			}
+		}
+
 		return implode( ' ', $string );
 	}
 
 	function process_imgdefer_on_attachment_image_attributes( $attr, $attachment ) {
-		if ( ! is_admin() ) {
+		if ( ! is_admin() || prevent_pimgdefer() ) {
 			$prevent_defering = (bool) get_post_meta( $attachment->ID, 'pimgdefer_prevent_defering', true );
+			
 			if( $prevent_defering ) {
 				$attr['data-prev-defering'] = "true";
 			} else {
