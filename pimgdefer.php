@@ -26,6 +26,10 @@ if ( ! function_exists( 'log_me' ) ) {
 	}
 }
 
+// Globals
+global $pimgdefer_allowed_post_types;
+$pimgdefer_allowed_post_types = get_option( 'pimgdefer_post_types', array() );
+
 // Plugin constants.
 $p_path      = trailingslashit( dirname( __FILE__ ) );
 $p_dir       = plugin_dir_url( __FILE__ );
@@ -34,6 +38,7 @@ $plugin_constants = array(
 	'PIMGDEFER_MAIN_FILE'  => __FILE__,
 	'PIMGDEFER_URL'        => $p_dir,
 	'PIMGDEFER_PATH'       => $p_path,
+    'PIMGDEFER_DOMAIN'     => 'pimgdefer',
 	'PIMGDEFER_SRC_REGEX'  => "/(<img[^>]*src *= *[\"']?)([^\"']*)/i",
 	'PIMGDEFER_SRCSET_REGEX'  => "/(<img[^>]*srcset *= *[\"']?)([^\"']*)/i",
 );
@@ -59,4 +64,9 @@ function enqueue_imgdefer_scripts() {
 add_action( 'wp_enqueue_scripts', 'enqueue_imgdefer_scripts', 10 );
 
 include_once PIMGDEFER_PATH . 'classes/class-img-defer-core.php';
-new Img_Defer_Core();
+include_once PIMGDEFER_PATH . 'classes/class-defer-toggle.php';
+include_once PIMGDEFER_PATH . 'classes/class-config.php';
+
+new PIMGDefer_Config();
+new PIMGDefer_Core();
+new PIMGDefer_Toggle();

@@ -3,14 +3,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Img_Defer_Core {
+class PIMGDefer_Core {
 
 	function __construct() {
+		// The content search and change to defer
 		add_filter( 'the_content', array( $this, 'process_imgdefer_on_the_content' ), 999, 1 );
+
+		// Tweenty something support
 		add_filter( 'get_header_image_tag', array( $this, 'process_imgdefer_on_the_content' ), 999, 1 );
+
+		// HTML post thumnail
 		add_filter( 'post_thumbnail_html', array( $this, 'process_imgdefer_on_the_content' ), 999 );
+
+		// Avatar defering
 		add_filter( 'get_avatar', array( $this, 'process_imgdefer_on_the_content' ), 999 );
-		add_filter( 'wp_get_attachment_image_attributes', array( $this, 'process_imgdefer_on_attachment_image_attributes' ), 999 );
+
+		// WP Attachment function support
+		add_filter( 'wp_get_attachment_image_attributes', array( $this, 'process_imgdefer_on_attachment_image_attributes' ), 999, 2 );
 	}
 
 	public function process_imgdefer_on_the_content( $content ) {
@@ -31,6 +40,10 @@ class Img_Defer_Core {
 		}
 
 		$old_attributes = wp_kses_hair( $old_attributes_str, wp_allowed_protocols() );
+
+		if( isset( $old_attributes['data-prev-defering'] ) && $old_attributes['data-prev-defering']['value'] == 'true' ) {
+			return $matches[0];
+		}
 
 		if ( empty( $old_attributes['src'] ) ) {
 			return $matches[0];
@@ -75,15 +88,19 @@ class Img_Defer_Core {
 		return implode( ' ', $string );
 	}
 
-	function process_imgdefer_on_attachment_image_attributes( $attr ) {
-		// log_me( $attr );
+	function process_imgdefer_on_attachment_image_attributes( $attr, $attachment ) {
 		if ( ! is_admin() ) {
-			$src_temp = $attr['src'];
-			$srcset_temp = $attr['srcset'];
-			$attr['src'] = get_default_imgdefer();
-			$attr['srcset'] = get_default_imgdefer();
-			$attr['data-src'] = $src_temp;
-			$attr['data-srcset'] = $srcset_temp;
+			$prevent_defering = (bool) get_post_meta( $attachment->ID, 'pimgdefer_prevent_defering', true );
+			if( $prevent_defering ) {
+				$attr['data-prev-defering'] = "true";
+			} else {
+				$src_temp = $attr['src'];
+				$srcset_temp = $attr['srcset'];
+				$attr['src'] = get_default_imgdefer();
+				$attr['srcset'] = get_default_imgdefer();
+				$attr['data-src'] = $src_temp;
+				$attr['data-srcset'] = $srcset_temp;
+			}
 		}
 
 		return $attr;
