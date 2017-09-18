@@ -104,18 +104,13 @@ class PIMGDefer_Core {
 
 	function process_imgdefer_on_attachment_image_attributes( $attr, $attachment ) {
 		if ( ! is_admin() || prevent_pimgdefer() ) {
-			$prevent_defering = (bool) get_post_meta( $attachment->ID, 'pimgdefer_prevent_defering', true );
-			
-			if( $prevent_defering ) {
-				$attr['data-prev-defering'] = "true";
-			} else {
-				$src_temp = $attr['src'];
-				$srcset_temp = $attr['srcset'];
-				$attr['src'] = get_default_imgdefer();
-				$attr['srcset'] = get_default_imgdefer();
-				$attr['data-src'] = $src_temp;
-				$attr['data-srcset'] = $srcset_temp;
-			}
+			// $prevent_defering = (bool) get_post_meta( $attachment->ID, 'pimgdefer_prevent_defering', true );
+            $src_temp = $attr['src'];
+            $srcset_temp = $attr['srcset'];
+            $attr['src'] = get_default_imgdefer();
+            $attr['srcset'] = get_default_imgdefer();
+            $attr['data-src'] = $src_temp;
+            $attr['data-srcset'] = $srcset_temp;
 		}
 
 		return $attr;
