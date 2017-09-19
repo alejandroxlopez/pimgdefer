@@ -177,7 +177,7 @@ function build_attributes_string_by_key( $attributes ) {
  * @return string the formated <img> tag string.
  */
 function apply_pimgdefer_on_array( $attrs = array() ) {
-	if( empty( $attrs['img'] ) ) {
+	if( empty( $attrs['src'] ) ) {
 		return '';
 	}
 	
