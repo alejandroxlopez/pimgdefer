@@ -136,7 +136,6 @@ function process_image( $matches ) {
  * @return string fomatted attr="value" string.
  */
 function build_attributes_string( $attributes ) {
-	log_me($attributes);
 	$string = array();
 	foreach ( $attributes as $name => $attribute ) {
 		$value = $attribute['value'];
