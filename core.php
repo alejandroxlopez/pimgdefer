@@ -1,17 +1,48 @@
 <?php
+// Here is the regular expresion to search and return every 
+// <img> tag inside a content.
 define( 'IMG_TAG_REGEX', '#<(img)([^>]+?)(>(.*?)</\\1>|[\/]?>)#si' );
+
+// This is the string format used by the sprintf function to create
+// the <img> tag when the rendering is done with just src..
 define( 'IMG_TAG_SRC', '<img src="%1$s" data-src="%2$s" %3$s>' );
+
+// This is the string format used by the sprintf function to create 
+// the <img> tag when the rendering is done with src and srcset
 define( 'IMG_TAG_SRC_SRCSET', '<img src="%1$s" srcset="%2$s" data-src="%3$s" data-srcset="%4$s" %5$s>' );
 
+/**
+ * This function returns a global variable which has a true or false value
+ * depending if we should defer the current page/post or not.
+ *
+ * @return bool
+ */
 function prevent_deferring() {
 	global $prevent_deffering_flag;
 	return (bool) $prevent_deffering_flag;
 }
 
+/**
+ * Here we return the default tiny image, this image is replaced with Javascript
+ * with the original one.
+ * 
+ * Remember the PIMGDEFER_URL constant should be change with the route of your small image,
+ * right now it points to this plugin route.
+ *
+ * @return void
+ */
 function get_default_tiny_image_placeholder() {
 	return  PIMGDEFER_URL . 'img/0.gif';
 }
 
+/**
+ * Function to register the Javascript for deffering images, this registers the minified version
+ * 
+ * Remember the PIMGDEFER_URL constant should be change with the route of your small image,
+ * right now it points to this plugin route.
+ *
+ * @return void
+ */
 function register_deferring_scripts() {
 	if ( prevent_deferring() ) {
 		return;
@@ -20,20 +51,40 @@ function register_deferring_scripts() {
 }
 add_action( 'init', 'register_deferring_scripts' );
 
+/**
+ * Function to enqueue the registered Javascript for deffering images.
+ *
+ * @return void
+ */
 function enqueue_deferring_scripts() {
 	wp_enqueue_script( 'pimgdefer' );
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_deferring_scripts', 10 );
 
+/**
+ * This function starts the proccesing of a HTML or TEXT content
+ * looking for <img> tags to create the deffering attributes.
+ *
+ * @param String $content
+ * @return String new formated content
+ */
 function process_defer_on_content( $content ) {
 	if ( is_feed() || is_preview() || prevent_deferring() ) {
 		return $content;
 	}
-
+	
+	// Here wee look for the <img> tags and run the "process_image" on each one found.
 	$content = preg_replace_callback( IMG_TAG_REGEX, 'process_image', $content );
 	return $content;
 }
 
+/**
+ * Core function which gets an Array of values matched when the regular expresion is processed
+ * process the matches and returns a new <img> tag with the required configuration to be deffered.
+ *
+ * @param array $matches
+ * @return string new formate <img> tag
+ */
 function process_image( $matches ) {
 	$placeholder_image = get_default_tiny_image_placeholder();
 
@@ -78,7 +129,14 @@ function process_image( $matches ) {
 	}
 }
 
+/**
+ * Creates an string with the format 'attr="value"' to append in the new formated <img> tag.
+ *
+ * @param array $attributes
+ * @return string fomatted attr="value" string.
+ */
 function build_attributes_string( $attributes ) {
+	log_me($attributes);
 	$string = array();
 	foreach ( $attributes as $name => $attribute ) {
 		$value = $attribute['value'];
@@ -92,6 +150,12 @@ function build_attributes_string( $attributes ) {
 	return implode( ' ', $string );
 }
 
+/**
+ * Creates an string with the format 'attr="value"' to append in the new formated <img> tag.
+ *
+ * @param array $attributes Associative array with the parameters to concatenate in a string.
+ * @return string fomatted attr="value" string.
+ */
 function build_attributes_string_by_key( $attributes ) {
 	$string = array();
 	foreach ( $attributes as $name => $value ) {
@@ -105,7 +169,19 @@ function build_attributes_string_by_key( $attributes ) {
 	return implode( ' ', $string );
 }
 
+/**
+ * Executes the logic to bild an <img> tag from an array of parameters.
+ * The new <img> tag created will be configured to be deffered.
+ *
+ * @param array $attrs Associative array with the attributes of the image. It is mandatory
+ * to pass at least 'src' attribute.
+ * @return string the formated <img> tag string.
+ */
 function apply_pimgdefer_on_array( $attrs = array() ) {
+	if( empty( $attrs['img'] ) ) {
+		return '';
+	}
+	
 	$extra_attributes = '';
 
 	if ( prevent_deferring() ) {
@@ -136,6 +212,16 @@ function apply_pimgdefer_on_array( $attrs = array() ) {
 	return sprintf( IMG_TAG_SRC, $src_placeholder, $src, $extra_attributes );
 }
 
+/**
+ * This function receives a string or an array value, and tries to figure out which function use
+ * to create the <img> tag. With an associative array of attributes or procesing the src parameter
+ * as a HTML/Text code.
+ *
+ * @param mixed $src this can be an associative array with the image src attribute or an HTML string
+ * with several <img> tags.
+ * @param array $attrs these are extra parameters to use in the new <img> tag, like title, alt, etc.
+ * @return string the created <img> tag.
+ */
 function get_deferred_image( $src, $attrs = array() ) {
 	$defaults = array(
 		'src' => '',
@@ -175,7 +261,10 @@ function get_deferred_image( $src, $attrs = array() ) {
 	return '';
 }
 
-// Apply deffer and echo on string or array
+/**
+ * This is just a wrapper function for get_deffered_image to print
+ * the created <img> tag.
+ */
 function the_deferred_image( $src, $attr = array() ) {
 	echo get_deferred_image( $src, $attr );
 }
