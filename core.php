@@ -18,8 +18,8 @@ define( 'IMG_TAG_SRC_SRCSET', '<img src="%1$s" srcset="%2$s" data-src="%3$s" dat
  * @return bool
  */
 function prevent_deferring() {
-	global $prevent_deffering_flag;
-	return (bool) $prevent_deffering_flag;
+	global $prevent_deferring_flag;
+	return (bool) $prevent_deferring_flag;
 }
 
 /**
