@@ -27,7 +27,7 @@ class PIMGDefer_Toggle {
 	}
 
 	function setup_pimgdefer_globals( $wp_object ) {
-		global $pimgdefer_allowed_post_types, $prevent_deffering_flag;
+		global $pimgdefer_allowed_post_types, $prevent_deferring_flag;
 
 		if ( ! is_array( $pimgdefer_allowed_post_types ) ) {
 			return;
@@ -37,7 +37,7 @@ class PIMGDefer_Toggle {
 		if ( isset( $query_object ) && ! empty( $query_object ) ) {
 			if ( isset( $query_object['post_type'] ) && isset( $query_object['ID'] ) ) {
 				if ( in_array( $query_object['post_type'], $pimgdefer_allowed_post_types ) ) {
-					$prevent_deffering_flag = (bool) get_post_meta( $query_object['ID'], 'pimgdefer_prevent_single_defering', true );
+					$prevent_deferring_flag = (bool) get_post_meta( $query_object['ID'], 'pimgdefer_prevent_single_defering', true );
 				}
 			}
 		}

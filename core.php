@@ -18,8 +18,8 @@ define( 'IMG_TAG_SRC_SRCSET', '<img src="%1$s" srcset="%2$s" data-src="%3$s" dat
  * @return bool
  */
 function prevent_deferring() {
-	global $prevent_deffering_flag;
-	return (bool) $prevent_deffering_flag;
+	global $prevent_deferring_flag;
+	return (bool) $prevent_deferring_flag;
 }
 
 /**
@@ -136,7 +136,6 @@ function process_image( $matches ) {
  * @return string fomatted attr="value" string.
  */
 function build_attributes_string( $attributes ) {
-	log_me($attributes);
 	$string = array();
 	foreach ( $attributes as $name => $attribute ) {
 		$value = $attribute['value'];
@@ -178,7 +177,7 @@ function build_attributes_string_by_key( $attributes ) {
  * @return string the formated <img> tag string.
  */
 function apply_pimgdefer_on_array( $attrs = array() ) {
-	if( empty( $attrs['img'] ) ) {
+	if( empty( $attrs['src'] ) ) {
 		return '';
 	}
 	

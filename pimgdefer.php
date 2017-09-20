@@ -27,9 +27,9 @@ if ( ! function_exists( 'log_me' ) ) {
 }
 
 // Globals
-global $pimgdefer_allowed_post_types, $prevent_deffering_flag;
+global $pimgdefer_allowed_post_types, $prevent_deferring_flag;
 
-$prevent_deffering_flag = false;
+$prevent_deferring_flag = false;
 $pimgdefer_allowed_post_types = get_option( 'pimgdefer_post_types', array() );
 
 // Plugin constants.
