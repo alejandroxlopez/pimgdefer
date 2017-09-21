@@ -33,11 +33,13 @@ class PIMGDefer_Toggle {
 			return;
 		}
 
-		$query_object = get_object_vars( get_queried_object() );
-		if ( isset( $query_object ) && ! empty( $query_object ) ) {
-			if ( isset( $query_object['post_type'] ) && isset( $query_object['ID'] ) ) {
-				if ( in_array( $query_object['post_type'], $pimgdefer_allowed_post_types ) ) {
-					$prevent_deferring_flag = (bool) get_post_meta( $query_object['ID'], 'pimgdefer_prevent_single_defering', true );
+		if( get_queried_object() ) {
+			$query_object = get_object_vars( get_queried_object() );
+			if ( isset( $query_object ) && ! empty( $query_object ) ) {
+				if ( isset( $query_object['post_type'] ) && isset( $query_object['ID'] ) ) {
+					if ( in_array( $query_object['post_type'], $pimgdefer_allowed_post_types ) ) {
+						$prevent_deferring_flag = (bool) get_post_meta( $query_object['ID'], 'pimgdefer_prevent_single_defering', true );
+					}
 				}
 			}
 		}
