@@ -5,3 +5,9 @@ This plugin will defer the loading of your images until after the initial page l
 The plugin tells your server to switch all image sources with a base64 1px image. Additionally, data-attributes reserve the original pathway to the image's location. When the HTML file is served, the browser will read the DOM and load the base64 image as a temporary place holder.
 
 After the DOM finishes loading, a script will run .onload and replace all of the sources with the image pathway found in the data-source. The effect is that your text content should load quicker, then the large image files will load after the rest of the page, thus increasing your pagespeed.
+
+
+##Standalone
+"core.php" is the stand-alone version of the plugin, if you want apply deferring to your theme without installing the plugin, you can copy and paste the core.php content in your functions.php and setup your PIMGDEFER_URL constant to your theme URL (get_template_directory_uri function of WordPress), you should also copy the 'scripts' and 'img' folders to your theme, because core.php will enqueue the Javascript to your theme and grap the 0.gif tiny image from the "img" folder.
+
+When you setup your the core.php code in your theme, you just use "get_deferred_image" or "the_deferred_image" functions to convert <img /> tags to deferring format.
